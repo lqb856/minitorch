@@ -8,6 +8,7 @@ import minitorch
 
 
 class Network(minitorch.Module):
+    # __init__ 定义模型结构
     def __init__(self, hidden_layers):
         super().__init__()
         # ASSIGN1.5
@@ -17,6 +18,7 @@ class Network(minitorch.Module):
         self.layer3 = Linear(hidden_layers, 1)
         # END ASSIGN1.5
 
+    # forward 进行模型计算
     def forward(self, x):
         middle = [h.relu() for h in self.layer1.forward(x)]
         end = [h.relu() for h in self.layer2.forward(middle)]

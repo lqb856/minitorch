@@ -30,19 +30,25 @@ def add(x: float, y: float) -> float:
 def neg(x: float) -> float:
     "$f(x) = -x$"
     # TODO: Implement for Task 0.1.
-    return -x
+    return -1.0 * x
 
 
 def lt(x: float, y: float) -> float:
     "$f(x) =$ 1.0 if x is less than y else 0.0"
     # TODO: Implement for Task 0.1.
-    return x < y
+    if x < y:
+        return 1.0
+    else:
+        return 0.0
 
 
 def eq(x: float, y: float) -> float:
     "$f(x) =$ 1.0 if x is equal to y else 0.0"
     # TODO: Implement for Task 0.1.
-    return abs(x - y) < 1e-9
+    if abs(x - y) < 1e-9:
+        return 1.0
+    else:
+         return 0.0
 
 def max(x: float, y: float) -> float:
     "$f(x) =$ x if x is greater than y else y"
@@ -56,7 +62,10 @@ def max(x: float, y: float) -> float:
 def is_close(x: float, y: float) -> float:
     "$f(x) = |x - y| < 1e-2$"
     # TODO: Implement for Task 0.1.
-    return abs(x - y) < 1e-2
+    if abs(x - y) < 1e-2:
+        return 1.0
+    else:
+        return 0.0
 
 
 def sigmoid(x: float) -> float:
@@ -72,10 +81,10 @@ def sigmoid(x: float) -> float:
     for stability.
     """
     # TODO: Implement for Task 0.1.
-    if x >= 0:
-        return 1.0 / (1.0 + exp(x))
+    if x >= 0.0:
+        return 1.0 / (1.0 + math.exp(-x))
     else:
-        return exp(x) / (1.0 + exp(x))
+        return math.exp(x) / (1.0 + math.exp(x))
 
 def relu(x: float) -> float:
     """
@@ -84,9 +93,9 @@ def relu(x: float) -> float:
     (See https://en.wikipedia.org/wiki/Rectifier_(neural_networks) .)
     """
     # TODO: Implement for Task 0.1.
-    if x > 0:
+    if x > 0.0:
         return x
-    return 0
+    return 0.0
 
 
 EPS = 1e-6
@@ -101,38 +110,32 @@ def exp(x: float) -> float:
     "$f(x) = e^{x}$"
     return math.exp(x)
 
-r'''
- python 中没有底数的 log 等价于 ln
- $f = log_a_x$ -> $f` = 1 / (x * ln a)$
- '''
 def log_back(x: float, d: float) -> float:
     r"If $f = log$ as above, compute $d \times f'(x)$"
+    r'''
+    python 中没有底数的 log 等价于 ln
+    $f = log_a_x$ -> $f` = 1 / (x * ln a)$
+    '''
     # TODO: Implement for Task 0.1.
-    if x < 0 or eq(x, 0.0):
-        return float('-inf')
     return d / x
 
 def inv(x: float) -> float:
     "$f(x) = 1/x$"
     # TODO: Implement for Task 0.1.
-    if eq(x, 0.0):
-        raise ZeroDivisionError
-    return 1 / x
+    return 1.0 / x
 
 
 def inv_back(x: float, d: float) -> float:
     r"If $f(x) = 1/x$ compute $d \times f'(x)$"
     # TODO: Implement for Task 0.1.
-    if eq(x, 0.0):
-        raise ZeroDivisionError
-    return -d * (x**-2)
+    return -1.0 * d * (x**-2)
 
 
 def relu_back(x: float, d: float) -> float:
     r"If $f = relu$ compute $d \times f'(x)$"
     # TODO: Implement for Task 0.1.
     if x <= 0:
-        return 0
+        return 0.0
     else:
         return d
 
@@ -234,12 +237,12 @@ def reduce(
 def sum(ls: Iterable[float]) -> float:
     "Sum up a list using `reduce` and `add`."
     # TODO: Implement for Task 0.3.
-    op = reduce(add, 0)
+    op = reduce(add, 0.0)
     return op(ls)
 
 
 def prod(ls: Iterable[float]) -> float:
     "Product of a list using `reduce` and `mul`."
     # TODO: Implement for Task 0.3.
-    prodder = reduce(mul, 1)
+    prodder = reduce(mul, 1.0)
     return prodder(ls)

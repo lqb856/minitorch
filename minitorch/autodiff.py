@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Tuple
+from typing import Any, Iterable, List, Tuple, Dict, Set
 
-from typing_extensions import Protocol
+from typing_extensions import Protocol, Sequence
 
 # ## Task 1.1
 # Central Difference calculation
@@ -23,7 +23,12 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
         An approximation of $f'_i(x_0, \ldots, x_{n-1})$
     """
     # TODO: Implement for Task 1.1.
-    raise NotImplementedError('Need to implement for Task 1.1')
+    vals = list(vals)
+    vals[arg] = vals[arg] + epsilon / 2
+    diff_forward = f(*vals)
+    vals[arg] = vals[arg] - epsilon
+    diff_backward = f(*vals)
+    return (diff_forward - diff_backward) / epsilon
 
 
 variable_count = 1
@@ -50,7 +55,34 @@ class Variable(Protocol):
     def chain_rule(self, d_output: Any) -> Iterable[Tuple["Variable", Any]]:
         pass
 
+def _detect_cycle(variable: Variable, marked: Set[int], onpath: Set[int]) -> bool:
+    marked.add(variable.unique_id)
+    onpath.add(variable.unique_id)
+    child_ret = False
+    for child in variable.parents:
+        if not child.unique_id in marked:
+            child_ret |= _detect_cycle(child, marked, onpath)
+        elif child.unique_id in onpath:
+            return True
+    onpath.remove(variable.unique_id)
+    return child_ret
 
+def _has_cycle(variable: Variable) -> bool:
+    marked: Set[int] = set()
+    onpath: Set[int] = set()
+    return _detect_cycle(variable, marked, onpath)
+
+def _reverse_dfs(variable: Variable, marked: Set[int], res: List[Variable]) -> None:
+    marked.add(variable.unique_id)
+    # filt out constant variable
+    if variable.is_constant():
+        return
+    
+    for child in variable.parents:
+        if not child.unique_id in marked:
+            _reverse_dfs(child, marked, res)
+    res.insert(0, variable)
+    
 def topological_sort(variable: Variable) -> Iterable[Variable]:
     """
     Computes the topological order of the computation graph.
@@ -62,8 +94,14 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
         Non-constant Variables in topological order starting from the right.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
-
+    if _has_cycle(variable):
+        raise RuntimeError("Cycle detected in your model graph!")
+    res: List[Variable] = []
+    marked: Set[int] = set()
+    _reverse_dfs(variable, marked, res)
+    return res
+    
+    
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
     """
@@ -77,7 +115,21 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
+    var2deriv: Dict[int, Any] = {}
+    topo_res: List[Variable] = topological_sort(variable)
+    for cur_var in topo_res:
+        assert not cur_var.is_constant()
+        if cur_var.unique_id in var2deriv:
+            deriv = var2deriv[cur_var.unique_id]
+        if cur_var.is_leaf():
+            cur_var.accumulate_derivative(deriv)
+            continue
+        var_derives = cur_var.chain_rule(deriv)
+        for var, var_deriv in var_derives:
+            if var.unique_id in var2deriv:
+                var2deriv[var.unique_id] += var_deriv
+            else:
+                var2deriv[var.unique_id] = var_deriv
 
 
 @dataclass
