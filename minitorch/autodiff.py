@@ -54,34 +54,6 @@ class Variable(Protocol):
 
     def chain_rule(self, d_output: Any) -> Iterable[Tuple["Variable", Any]]:
         pass
-
-def _detect_cycle(variable: Variable, marked: Set[int], onpath: Set[int]) -> bool:
-    marked.add(variable.unique_id)
-    onpath.add(variable.unique_id)
-    child_ret = False
-    for child in variable.parents:
-        if not child.unique_id in marked:
-            child_ret |= _detect_cycle(child, marked, onpath)
-        elif child.unique_id in onpath:
-            return True
-    onpath.remove(variable.unique_id)
-    return child_ret
-
-def _has_cycle(variable: Variable) -> bool:
-    marked: Set[int] = set()
-    onpath: Set[int] = set()
-    return _detect_cycle(variable, marked, onpath)
-
-def _reverse_dfs(variable: Variable, marked: Set[int], res: List[Variable]) -> None:
-    marked.add(variable.unique_id)
-    # filt out constant variable
-    if variable.is_constant():
-        return
-    
-    for child in variable.parents:
-        if not child.unique_id in marked:
-            _reverse_dfs(child, marked, res)
-    res.insert(0, variable)
     
 def topological_sort(variable: Variable) -> Iterable[Variable]:
     """
@@ -94,11 +66,27 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
         Non-constant Variables in topological order starting from the right.
     """
     # TODO: Implement for Task 1.4.
-    if _has_cycle(variable):
-        raise RuntimeError("Cycle detected in your model graph!")
+    def _reverse_dfs(variable: Variable, marked: Set[int], onpath: Set[int], res: List[Variable]) -> None:
+        marked.add(variable.unique_id)
+        onpath.add(variable.unique_id)
+        # filt out constant variable
+        if variable.is_constant():
+            onpath.remove(variable.unique_id)
+            return
+        
+        for child in variable.parents:
+            if not child.unique_id in marked:
+                _reverse_dfs(child, marked, onpath, res)
+            if child.unique_id in onpath:
+                raise RuntimeError("A cycle is detected in your computing graph!")
+            
+        res.insert(0, variable)
+        onpath.remove(variable.unique_id)
+    
     res: List[Variable] = []
     marked: Set[int] = set()
-    _reverse_dfs(variable, marked, res)
+    onpath: Set[int] = set()
+    _reverse_dfs(variable, marked, onpath, res)
     return res
     
     

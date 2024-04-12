@@ -27,17 +27,26 @@ class Network(minitorch.Module):
 
 class Linear(minitorch.Module):
     def __init__(self, in_size, out_size):
+        '''
+        in_size 为每个函数的接收参数数量
+        out_size 为该线性层的函数数量，也就是该线性层的输出大小
+        '''
         super().__init__()
         self.weights = []
         self.bias = []
+        self.in_size = in_size
+        self.out_size = out_size
+        # 每个函数 in_size 个参数
         for i in range(in_size):
             self.weights.append([])
+            # out_size 个函数
             for j in range(out_size):
                 self.weights[i].append(
                     self.add_parameter(
                         f"weight_{i}_{j}", minitorch.Scalar(2 * (random.random() - 0.5))
                     )
                 )
+        # out_size 个 bios
         for j in range(out_size):
             self.bias.append(
                 self.add_parameter(
@@ -47,12 +56,20 @@ class Linear(minitorch.Module):
 
     def forward(self, inputs):
         # ASSIGN1.5
-        y = [b.value for b in self.bias]
-        for i, x in enumerate(inputs):
-            for j in range(len(y)):
-                y[j] = y[j] + x * self.weights[i][j].value
-        return y
+        # y = [b.value for b in self.bias]
+        # for i, x in enumerate(inputs):
+        #     for j in range(len(y)):
+        #         y[j] = y[j] + x * self.weights[i][j].value
+        # return y
         # END ASSIGN1.5
+        y = []
+        for i in range(0, self.out_size):
+            tmp = 0
+            for j in range(0, self.in_size):
+                tmp += self.weights[j][i].value * inputs[j]
+            tmp += self.bias[i].value
+            y.append(tmp)
+        return y
 
 
 def default_log_fn(epoch, total_loss, correct, losses):

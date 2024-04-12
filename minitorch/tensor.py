@@ -12,6 +12,7 @@ import numpy as np
 from . import operators
 from .autodiff import Context, Variable, backpropagate
 from .tensor_data import TensorData
+from .tensor_ops import SimpleBackend, TensorBackend
 from .tensor_functions import (
     EQ,
     LT,
@@ -78,7 +79,7 @@ class Tensor:
         v: TensorData,
         back: Optional[History] = None,
         name: Optional[str] = None,
-        backend: Optional[TensorBackend] = None,
+        backend: Optional[TensorBackend] = SimpleBackend,
     ):
         global _tensor_count
         _tensor_count += 1

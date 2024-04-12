@@ -209,6 +209,9 @@ def addLists(ls1: Iterable[float], ls2: Iterable[float]) -> Iterable[float]:
     op = zipWith(add)
     return op(ls1, ls2)
 
+def prodLists(ls1: Iterable[float], ls2: Iterable[float]) -> Iterable[float]:
+    op = zipWith(mul)
+    return op(ls1, ls2)
 
 def reduce(
     fn: Callable[[float, float], float], start: float

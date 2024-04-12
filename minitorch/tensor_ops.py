@@ -129,6 +129,7 @@ class SimpleOps(TensorOps):
         def ret(a: Tensor, out: Optional[Tensor] = None) -> Tensor:
             if out is None:
                 out = a.zeros(a.shape)
+            assert list(shape_broadcast(a.shape, out.shape)) == list(out.shape)
             f(*out.tuple(), *a.tuple())
             return out
 
@@ -265,8 +266,17 @@ def tensor_map(
         in_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        raise NotImplementedError('Need to implement for Task 2.3')
-
+        # in_shape must can broadcast to out_shape
+        # assert list(shape_broadcast(in_shape, out_shape)) == list(out_shape)
+        in_index = np.empty(len(in_shape))
+        out_index = np.empty(len(out_shape))
+        for i in range(len(out)):
+            to_index(i, out_shape, out_index)
+            broadcast_index(out_index, out_shape, in_shape, in_index)
+            data = in_storage[index_to_position(in_index, in_strides)]
+            mapped_data = fn(data)
+            out[i] = mapped_data
+            
     return _map
 
 
@@ -310,8 +320,19 @@ def tensor_zip(
         b_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        raise NotImplementedError('Need to implement for Task 2.3')
-
+        # assert list(shape_broadcast(a_shape, out_shape)) == list(out_shape)
+        # assert list(shape_broadcast(b_shape, out_shape)) == list(out_shape)
+        a_index = np.empty(len(a_shape))
+        b_index = np.empty(len(b_shape))
+        out_index = np.empty(len(out_shape))
+        for i in range(len(out)):
+            to_index(i, out_shape, out_index)
+            broadcast_index(out_index, out_shape, a_shape, a_index)
+            a_data = a_storage[index_to_position(a_index, a_strides)]
+            broadcast_index(out_index, out_shape, b_shape, b_index)
+            b_data = b_storage[index_to_position(b_index, b_strides)]
+            mapped_data = fn(a_data, b_data)
+            out[i] = mapped_data
     return _zip
 
 
@@ -341,8 +362,17 @@ def tensor_reduce(
         reduce_dim: int,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        raise NotImplementedError('Need to implement for Task 2.3')
-
+        # assert out_shape[reduce_dim] == 1
+        out_index = np.empty(len(out_shape))
+        for i in range(len(out)):
+            to_index(i, out_shape, out_index)
+            # out_position = index_to_position(out_index, out_strides)
+            # one out_index refers to reduce_dim num of in_indexes
+            for j in range(a_shape[reduce_dim]):
+                a_index = out_index.copy()
+                a_index[reduce_dim] = j
+                a_position = index_to_position(a_index, a_strides)
+                out[i] = fn(a_storage[a_position], out[i])
     return _reduce
 
 
