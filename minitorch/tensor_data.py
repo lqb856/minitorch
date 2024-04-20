@@ -44,7 +44,10 @@ def index_to_position(index: Index, strides: Strides) -> int:
     """
 
     # TODO: Implement for Task 2.1.
-    return int(sum(prodLists(index, strides)))
+    pos = 0
+    for i, val in enumerate(index):
+        pos += val * strides[i]
+    return int(pos)
 
 
 def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
@@ -61,8 +64,6 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
 
     """
     # TODO: Implement for Task 2.1.
-    assert isinstance(ordinal, int)
-    
     for d in range(len(shape) - 1, -1, -1):
         out_index[d] = ordinal % shape[d]
         ordinal = ordinal // shape[d]

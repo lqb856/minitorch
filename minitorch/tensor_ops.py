@@ -223,7 +223,51 @@ class SimpleOps(TensorOps):
 
     @staticmethod
     def matrix_multiply(a: "Tensor", b: "Tensor") -> "Tensor":
-        raise NotImplementedError("Not implemented in this assignment")
+        """
+        Batched tensor matrix multiply ::
+
+            for n:
+              for i:
+                for j:
+                  for k:
+                    out[n, i, j] += a[n, i, k] * b[n, k, j]
+
+        Where n indicates an optional broadcasted batched dimension.
+
+        Should work for tensor shapes of 3 dims ::
+
+            assert a.shape[-1] == b.shape[-2]
+
+        Args:
+            a : tensor data a
+            b : tensor data b
+
+        Returns:
+            New tensor data
+        """
+
+        # Make these always be a 3 dimensional multiply
+        both_2d = 0
+        if len(a.shape) == 2:
+            a = a.contiguous().view(1, a.shape[0], a.shape[1])
+            both_2d += 1
+        if len(b.shape) == 2:
+            b = b.contiguous().view(1, b.shape[0], b.shape[1])
+            both_2d += 1
+        both_2d = both_2d == 2
+
+        ls = list(shape_broadcast(a.shape[:-2], b.shape[:-2]))
+        ls.append(a.shape[-2])
+        ls.append(b.shape[-1])
+        assert a.shape[-1] == b.shape[-2]
+        out = a.zeros(tuple(ls))
+
+        _tensor_matrix_multiply(*out.tuple(), *a.tuple(), *b.tuple())
+
+        # Undo 3d if we added it.
+        if both_2d:
+            out = out.view(out.shape[1], out.shape[2])
+        return out
 
     is_cuda = False
 
@@ -268,8 +312,8 @@ def tensor_map(
         # TODO: Implement for Task 2.3.
         # in_shape must can broadcast to out_shape
         # assert list(shape_broadcast(in_shape, out_shape)) == list(out_shape)
-        in_index = np.empty(len(in_shape))
-        out_index = np.empty(len(out_shape))
+        in_index = np.zeros(len(in_shape))
+        out_index = np.zeros(len(out_shape))
         for i in range(len(out)):
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, in_shape, in_index)
@@ -322,9 +366,9 @@ def tensor_zip(
         # TODO: Implement for Task 2.3.
         # assert list(shape_broadcast(a_shape, out_shape)) == list(out_shape)
         # assert list(shape_broadcast(b_shape, out_shape)) == list(out_shape)
-        a_index = np.empty(len(a_shape))
-        b_index = np.empty(len(b_shape))
-        out_index = np.empty(len(out_shape))
+        a_index = np.zeros(len(a_shape))
+        b_index = np.zeros(len(b_shape))
+        out_index = np.zeros(len(out_shape))
         for i in range(len(out)):
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, a_shape, a_index)
@@ -363,7 +407,7 @@ def tensor_reduce(
     ) -> None:
         # TODO: Implement for Task 2.3.
         # assert out_shape[reduce_dim] == 1
-        out_index = np.empty(len(out_shape))
+        out_index = np.zeros(len(out_shape))
         for i in range(len(out)):
             to_index(i, out_shape, out_index)
             # out_position = index_to_position(out_index, out_strides)
@@ -374,6 +418,61 @@ def tensor_reduce(
                 a_position = index_to_position(a_index, a_strides)
                 out[i] = fn(a_storage[a_position], out[i])
     return _reduce
+
+
+def _tensor_matrix_multiply(
+    out: Storage,
+    out_shape: Shape,
+    out_strides: Strides,
+    a_storage: Storage,
+    a_shape: Shape,
+    a_strides: Strides,
+    b_storage: Storage,
+    b_shape: Shape,
+    b_strides: Strides,
+) -> None:
+    """
+    Batched tensor matrix multiply ::
+
+        for n:
+            for i:
+                for j:
+                    for k:
+                        out[n, i, j] += a[n, i, k] * b[n, k, j]
+
+    Where n indicates an optional broadcasted batched dimension.
+
+    Should work for tensor shapes of 3 dims ::
+
+        assert a.shape[-1] == b.shape[-2]
+
+    Args:
+        a : tensor data a
+        b : tensor data b
+
+    Returns:
+        New tensor data
+    """
+    a_batch_stride = a_strides[0] if a_shape[0] > 1 else 0
+    b_batch_stride = b_strides[0] if b_shape[0] > 1 else 0
+
+    a_strides_mod = a_strides.copy()
+    b_strides_mod = b_strides.copy()
+    a_strides_mod[0] = a_batch_stride
+    b_strides_mod[0] = b_batch_stride
+
+    for n in range(out_shape[0]):
+        for i in range(out_shape[1]):
+            for j in range(out_shape[2]):
+                for k in range(a_shape[1]):
+                    out_index = np.array([n, i, j])
+                    a_index = np.array([n, i, k])
+                    b_index = np.array([n, k, j])
+                    out_pos = index_to_position(out_index, out_strides)
+                    a_pos = index_to_position(a_index, a_strides_mod)
+                    b_pos = index_to_position(b_index, b_strides_mod)
+                    out[out_pos] += a_storage[a_pos] * b_storage(b_pos)
+        
 
 
 SimpleBackend = TensorBackend(SimpleOps)
