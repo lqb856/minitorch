@@ -464,7 +464,7 @@ def _tensor_matrix_multiply(
     for n in range(out_shape[0]):
         for i in range(out_shape[1]):
             for j in range(out_shape[2]):
-                for k in range(a_shape[1]):
+                for k in range(a_shape[2]):
                     out_index = np.array([n, i, j])
                     a_index = np.array([n, i, k])
                     b_index = np.array([n, k, j])

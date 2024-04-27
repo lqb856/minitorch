@@ -307,18 +307,19 @@ def _tensor_matrix_multiply(
     b_batch_stride = b_strides[0] if b_shape[0] > 1 else 0
 
     # TODO: Implement for Task 3.2.
+    assert a_shape[2] == b_shape[1]
 
     a_strides_mod = a_strides.copy()
     b_strides_mod = b_strides.copy()
     a_strides_mod[0] = a_batch_stride
     b_strides_mod[0] = b_batch_stride
 
-    for n in range(out_shape[0]):
-        for i in range(out_shape[1]):
-            for j in range(out_shape[2]):
+    for n in prange(out_shape[0]):
+        for i in prange(out_shape[1]):
+            for j in prange(out_shape[2]):
                 out_index = np.array([n, i, j], dtype = np.int32)
                 out_pos = index_to_position(out_index, out_strides)
-                for k in range(b_shape[2]):
+                for k in range(b_shape[1]):
                     a_index = np.array([n, i, k], dtype = np.int32)
                     b_index = np.array([n, k, j], dtype = np.int32)
                     a_pos = index_to_position(a_index, a_strides_mod)

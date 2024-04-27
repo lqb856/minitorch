@@ -154,7 +154,14 @@ def tensor_map(
         in_index = cuda.local.array(MAX_DIMS, numba.int32)
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
         # TODO: Implement for Task 3.3.
-        raise NotImplementedError('Need to implement for Task 3.3')
+        if i >= out_size: return
+        # grid-stride loop
+        for pos in range(i, out_size, cuda.blockDim.x * cuda.gridDim.x):
+            to_index(pos, out_shape, out_index)
+            broadcast_index(out_index, out_shape, in_shape, in_index)
+            data = in_storage[index_to_position(in_index, in_strides)]
+            mapped_data = fn(data)
+            out[pos] = mapped_data
 
     return cuda.jit()(_map)  # type: ignore
 
@@ -196,7 +203,16 @@ def tensor_zip(
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
 
         # TODO: Implement for Task 3.3.
-        raise NotImplementedError('Need to implement for Task 3.3')
+        if i >= out_size:
+            return
+        for pos in range(i, out_size, cuda.blockDim.x * cuda.gridDim.x):
+            to_index(pos, out_shape, out_index)
+            broadcast_index(out_index, out_shape, a_shape, a_index)
+            a_data = a_storage[index_to_position(a_index, a_strides)]
+            broadcast_index(out_index, out_shape, b_shape, b_index)
+            b_data = b_storage[index_to_position(b_index, b_strides)]
+            mapped_data = fn(a_data, b_data)
+            out[pos] = mapped_data
 
     return cuda.jit()(_zip)  # type: ignore
 
@@ -227,9 +243,18 @@ def _sum_practice(out: Storage, a: Storage, size: int) -> None:
     cache = cuda.shared.array(BLOCK_DIM, numba.float64)
     i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
     pos = cuda.threadIdx.x
+    grid_size = cuda.blockDim.x * cuda.gridDim.x
 
     # TODO: Implement for Task 3.3.
-    raise NotImplementedError('Need to implement for Task 3.3')
+    if i > size:
+        return
+    for ori_pos in range(i, size, grid_size * 32):
+        sum = 0.0
+        
+        for index in range(ori_pos, ori_pos + 32):
+            sum += a[index]
+        out[pos] = sum
+        pos += grid_size
 
 
 jit_sum_practice = cuda.jit()(_sum_practice)
