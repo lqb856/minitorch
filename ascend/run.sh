@@ -70,8 +70,13 @@ elif [ -n "$ASCEND_HOME_PATH" ]; then
 else
     if [ -d "$HOME/Ascend/ascend-toolkit/latest" ]; then
         _ASCEND_INSTALL_PATH=$HOME/Ascend/ascend-toolkit/latest
-    else
+    elif [ -d "/usr/local/Ascend/ascend-toolkit/latest" ]; then
         _ASCEND_INSTALL_PATH=/usr/local/Ascend/ascend-toolkit/latest
+    elif [ -d "/opt/ascend/ascend-toolkit/latest" ]; then
+        _ASCEND_INSTALL_PATH=/opt/ascend/ascend-toolkit/latest
+    else
+        echo "[ERROR] ASCEND_INSTALL_PATH is not set"
+        exit -1
     fi
 fi
 # in case of running op in simulator, use stub so instead

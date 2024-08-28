@@ -1,27 +1,3 @@
-cmake_minimum_required(VERSION 3.0)
-project(AscendC_Kernels)
-
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 17)
-
-# set default values
-set(RUN_MODE "npu" CACHE STRING "cpu/sim/npu")
-set(SOC_VERSION "Ascend310B4" CACHE STRING "system on chip type")
-set(ASCEND_CANN_PACKAGE_PATH "/opt/ascend/ascend-toolkit/8.0/" CACHE STRING "ASCEND CANN package installation directory")
-set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type Release/Debug (default Debug)" FORCE)
-
-if(CMAKE_INSTALL_PREFIX STREQUAL /usr/local)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}/out" CACHE STRING "path for install()" FORCE)
-endif()
-
-file(GLOB KERNEL_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/binary_op.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/unary_op.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sub_custom.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/ascend_api_list.h
-)
-
-message("ASCEND_CANN_PACKAGE_PATH: ${ASCEND_CANN_PACKAGE_PATH}")
 if(EXISTS ${ASCEND_CANN_PACKAGE_PATH}/compiler/tikcpp/ascendc_kernel_cmake)
     set(ASCENDC_CMAKE_DIR ${ASCEND_CANN_PACKAGE_PATH}/compiler/tikcpp/ascendc_kernel_cmake)
 elseif(EXISTS ${ASCEND_CANN_PACKAGE_PATH}/tools/tikcpp/ascendc_kernel_cmake)
@@ -57,4 +33,3 @@ target_link_libraries(ascendc_kernels_${RUN_MODE} PRIVATE
     ascendalog
     dl
 )
-
