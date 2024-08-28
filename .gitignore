@@ -133,3 +133,6 @@ pyodide
 
 # code for test
 ./demo.py
+
+# vscode settings
+.vscode/

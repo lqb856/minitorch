@@ -18,7 +18,7 @@ class IndexingError(RuntimeError):
     "Exception raised for indexing errors."
     pass
 
-
+# TODO(lqb): 使用 c++ 实现
 Storage: TypeAlias = npt.NDArray[np.float64]
 OutIndex: TypeAlias = npt.NDArray[np.int32]
 Index: TypeAlias = npt.NDArray[np.int32]
@@ -139,7 +139,7 @@ def strides_from_shape(shape: UserShape) -> UserStrides:
         offset = s * offset
     return tuple(reversed(layout[:-1]))
 
-
+# TODO(lqb): 使用 c++ 实现
 class TensorData:
     _storage: Storage
     _strides: Strides

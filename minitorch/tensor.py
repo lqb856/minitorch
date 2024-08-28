@@ -46,6 +46,7 @@ if TYPE_CHECKING:
     TensorLike = Union[float, int, "Tensor"]
 
 
+# TODO(lqb): 使用 c++ 实现
 @dataclass
 class History:
     """
