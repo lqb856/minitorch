@@ -5,9 +5,7 @@
  * @Description  : 
  */
 
-#pragma once
-
-#include "ascend/ascend_api_list.h"
+#include "ascend_api_list.h"
 #include "ascend_device_api.h"
 #include "dl_context.h"
 

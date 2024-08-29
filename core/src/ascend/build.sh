@@ -121,12 +121,12 @@ cmake -B build                               \
 cmake --build build -j -v
 cmake --install build
 
-cp ./out/bin/ascendc_kernels_bbit ./
-rm -rf input output
-mkdir -p input output
-# python3 scripts/gen_data.py
-./ascendc_kernels_bbit
-# md5sum output/*.bin
-# python3 scripts/verify_result.py output/output_z.bin output/golden.bin
+# cp ./out/bin/ascendc_kernels_bbit ./
+# rm -rf input output
+# mkdir -p input output
+# # python3 scripts/gen_data.py
+# ./ascendc_kernels_bbit
+# # md5sum output/*.bin
+# # python3 scripts/verify_result.py output/output_z.bin output/golden.bin
 
-rm -rf *log *.vcd
+# rm -rf *log *.vcd

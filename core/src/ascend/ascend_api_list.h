@@ -8,10 +8,11 @@
 #pragma once
 
 #include "acl/acl.h"
-#include "aclrtlaunch_binary_op.h"
-#include "aclrtlaunch_unary_op.h"
 #include "custom_tiling.h"
+#include "aclrtlaunch_binary_op_kernal.h"
+#include "aclrtlaunch_unary_op_kernal.h"
 #include <cstdint>
+#include <iostream>
 
 #define CHECK_ACL(x)                                                           \
   do {                                                                         \
@@ -23,15 +24,17 @@
     exit(-1);                                                                  \
   } while (0);
 
+// TODO(lqb): add more kernel functions
+// TODO(lqb): wrap the kernel functions to avoid the user to call the kernel functions directly
 // call of kernel function
 void binary_op_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *x,
                   uint8_t *y, uint8_t *z, CustomTilingData *tiling) {
-  ACLRT_LAUNCH_KERNEL(binary_op)(blockDim, stream, x, y, z, nullptr, tiling);
+  ACLRT_LAUNCH_KERNEL(binary_op_kernal)(blockDim, stream, x, y, z, nullptr, tiling);
 }
 
 void unary_op_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *x,
                  uint8_t *y, CustomTilingData *tiling) {
-  ACLRT_LAUNCH_KERNEL(unary_op)
+  ACLRT_LAUNCH_KERNEL(unary_op_kernal)
   (blockDim, stream, x, y, nullptr, nullptr, tiling);
 }
 
@@ -73,7 +76,7 @@ void *context_create(int device_id) {
   aclrtContext context;
   CHECK_ACL(aclInit(nullptr));
   CHECK_ACL(aclrtSetDevice(device_id));
-  CHECK_ACL(aclrtCreateContext(&context, deviceId));
+  CHECK_ACL(aclrtCreateContext(&context, device_id));
   return static_cast<void *>(context);
 }
 

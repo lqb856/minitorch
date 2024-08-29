@@ -95,7 +95,7 @@ private:
   NPU_OP_TYPE op_type_;
 };
 
-extern "C" __global__ __aicore__ void binary_op(GM_ADDR x, GM_ADDR y, GM_ADDR z,
+extern "C" __global__ __aicore__ void binary_op_kernal(GM_ADDR x, GM_ADDR y, GM_ADDR z,
                                                 GM_ADDR workspace,
                                                 CustomTilingData tiling) {
   // printf("add_custom, totalLength=%d, tileNum=%d\n", tiling.totalLength,
