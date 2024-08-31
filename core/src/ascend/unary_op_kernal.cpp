@@ -8,6 +8,7 @@
 #include "custom_tiling.h"
 #include "kernel_operator.h"
 #include <cstdint>
+#include <type_traits>
 
 using namespace AscendC;
 
@@ -83,11 +84,41 @@ private:
   NPU_OP_TYPE op_type_;
 };
 
-extern "C" __global__ __aicore__ void unary_op_kernal(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, CustomTilingData tiling)
+// template <typename Type>
+// extern "C" __global__ __aicore__ void unary_op_kernal(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, CustomTilingData tiling)
+// {
+//   // printf("add_custom, totalLength=%d, tileNum=%d\n", tiling.totalLength,
+//   //        tiling.tileNum);
+//   // assert(std::is_same<Type, half> || std::is_same<Type, float> ||
+//   //        std::is_same<Type, int32_t>);
+//   UnaryOP<Type> op;
+//   op.Init(x, y, tiling.totalLength, tiling.tileNum, static_cast<NPU_OP_TYPE>(tiling.opType));
+//   op.Process();
+// }
+
+extern "C" __global__ __aicore__ void unary_op_kernal_half(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, CustomTilingData tiling)
 {
   // printf("add_custom, totalLength=%d, tileNum=%d\n", tiling.totalLength,
   //        tiling.tileNum);
   UnaryOP<half> op;
+  op.Init(x, y, tiling.totalLength, tiling.tileNum, static_cast<NPU_OP_TYPE>(tiling.opType));
+  op.Process();
+}
+
+extern "C" __global__ __aicore__ void unary_op_kernal_float(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, CustomTilingData tiling)
+{
+  // printf("add_custom, totalLength=%d, tileNum=%d\n", tiling.totalLength,
+  //        tiling.tileNum);
+  UnaryOP<float> op;
+  op.Init(x, y, tiling.totalLength, tiling.tileNum, static_cast<NPU_OP_TYPE>(tiling.opType));
+  op.Process();
+}
+
+extern "C" __global__ __aicore__ void unary_op_kernal_int32_t(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, CustomTilingData tiling)
+{
+  // printf("add_custom, totalLength=%d, tileNum=%d\n", tiling.totalLength,
+  //        tiling.tileNum);
+  UnaryOP<int32_t> op;
   op.Init(x, y, tiling.totalLength, tiling.tileNum, static_cast<NPU_OP_TYPE>(tiling.opType));
   op.Process();
 }

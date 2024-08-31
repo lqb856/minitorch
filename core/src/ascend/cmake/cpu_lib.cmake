@@ -25,6 +25,6 @@ target_include_directories(ascendc_kernels_${RUN_MODE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-install(TARGETS ascendc_kernels_${RUN_MODE}
-DESTINATION ${CMAKE_INSTALL_LIBDIR}
-)
+# install(TARGETS ascendc_kernels_${RUN_MODE}
+# DESTINATION ${CMAKE_INSTALL_LIBDIR}
+# )

@@ -32,3 +32,4 @@ public:
 };
 
 typedef void *DLStreamHandle;
+typedef void *DLContextHandle;

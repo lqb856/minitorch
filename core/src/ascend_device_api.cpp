@@ -51,5 +51,25 @@ void AscendDeviceAPI::StreamSync(DLContext ctx, DLStreamHandle stream) {
   stream_sync(stream);
 }
 
+void AscendDeviceAPI::StreamCreate(DLContext ctx, DLStreamHandle *stream) {
+  assert(ctx.device_type_ == DLDeviceType::KAtlas);
+  *stream = stream_create();
+}
+
+void AscendDeviceAPI::StreamDestroy(DLContext ctx, DLStreamHandle stream) {
+  assert(ctx.device_type_ == DLDeviceType::KAtlas);
+  stream_destroy(stream);
+}
+
+void AscendDeviceAPI::ContextCreate(DLContext ctx, DLContextHandle *context) {
+  assert(ctx.device_type_ == DLDeviceType::KAtlas);
+  *context = context_create(ctx.device_id_);
+}
+
+void AscendDeviceAPI::ContextDestroy(DLContext ctx, DLContextHandle context) {
+  assert(ctx.device_type_ == DLDeviceType::KAtlas);
+  context_destroy(context, ctx.device_id_);
+}
+
 } // namespace runtime
 } // namespace dlsys

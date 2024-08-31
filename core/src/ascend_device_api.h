@@ -22,6 +22,10 @@ public:
                       DLContext ctx_from, DLContext ctx_to,
                       DLStreamHandle stream) final;
   void StreamSync(DLContext ctx, DLStreamHandle stream) final;
+  void StreamCreate(DLContext ctx, DLStreamHandle *stream) final;
+  void StreamDestroy(DLContext ctx, DLStreamHandle stream) final;
+  void ContextCreate(DLContext ctx, DLContextHandle *context) final;
+  void ContextDestroy(DLContext ctx, DLContextHandle context) final;
 };
 
 } // namespace runtime

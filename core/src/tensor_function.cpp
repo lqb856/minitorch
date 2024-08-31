@@ -50,6 +50,20 @@ FORWARD_FUNCTION_IMPL(AddFunction) {
 
 BACKWARD_FUNCTION_IMPL(AddFunction) { return {inputs, inputs}; }
 
+FORWARD_FUNCTION_IMPL(SubFunction) {
+  assert(inputs.size() == 2);
+  std::shared_ptr<Tensor> output = nullptr;
+  TensorBackendManager::Get(inputs[0]->ctx_)
+      .Sub_Zip(inputs[0], inputs[1], output);
+  return output;
+}
+
+BACKWARD_FUNCTION_IMPL(SubFunction) {
+  std::shared_ptr<Tensor> output = nullptr;
+  TensorBackendManager::Get(inputs->ctx_).Neg_Map(inputs, output);
+  return {inputs, output}; 
+}
+
 FORWARD_FUNCTION_IMPL(NegFunction) {
   assert(inputs.size() == 1);
   std::shared_ptr<Tensor> output = nullptr;

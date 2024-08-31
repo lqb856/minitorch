@@ -47,13 +47,41 @@ public:
   virtual void CopyDataFromTo(const void *from, void *to, size_t size,
                               DLContext ctx_from, DLContext ctx_to,
                               DLStreamHandle stream) = 0;
-  
+
+
+  /**
+   * @brief Create a stream for copy and compute.
+   * @param ctx The context of the device.
+   * @return The created stream.
+   */
+  virtual void StreamCreate(DLContext ctx, DLStreamHandle *stream) = 0;
+
+  /**
+   * @brief Destroy a created stream.
+   * @param ctx The context of the device.
+   * @param stream The stream to be destroyed.
+   */
+  virtual void StreamDestroy(DLContext ctx, DLStreamHandle stream) = 0;
+
   /**
    * @brief Create a stream for copy and compute.
    * @param ctx The context of the device.
    * @return The created stream.
    */
   virtual void StreamSync(DLContext ctx, DLStreamHandle stream) = 0;
+
+  /**
+   * @brief Create a context for the device.
+   * @param ctx The context of the device.
+   */
+  virtual void ContextCreate(DLContext ctx, DLContextHandle *context) = 0;
+
+  /**
+   * @brief Destroy a created context.
+   * @param ctx The context of the device.
+   * @param context The context to be destroyed.
+   */
+  virtual void ContextDestroy(DLContext ctx, DLContextHandle context) = 0;
 };
 
 } // namespace runtime

@@ -31,5 +31,13 @@ void CPUDeviceAPI::CopyDataFromTo(const void *from, void *to, size_t size,
 
 void CPUDeviceAPI::StreamSync(DLContext ctx, DLStreamHandle stream) {}
 
+void CPUDeviceAPI::StreamCreate(DLContext ctx, DLStreamHandle *stream) {}
+
+void CPUDeviceAPI::StreamDestroy(DLContext ctx, DLStreamHandle stream) {}
+
+void CPUDeviceAPI::ContextCreate(DLContext ctx, DLContextHandle *context) {}
+
+void CPUDeviceAPI::ContextDestroy(DLContext ctx, DLContextHandle context) {}
+
 } // namespace runtime
 } // namespace dlsys

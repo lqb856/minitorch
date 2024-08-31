@@ -8,7 +8,9 @@
 
 #include "custom_tiling.h"
 #include "kernel_operator.h"
+#include <cassert>
 #include <cstdint>
+#include <type_traits>
 
 using namespace AscendC;
 
@@ -25,6 +27,7 @@ public:
     this->tileNum = tileNum;
     this->tileLength = this->blockLength / tileNum / BUFFER_NUM;
     this->op_type_ = op_type;
+    // TODO(lqb): what if the totalLength is not divisible by blockNum?
     xGm.SetGlobalBuffer((__gm__ srcType *)x + this->blockLength * GetBlockIdx(),
                         this->blockLength);
     yGm.SetGlobalBuffer((__gm__ srcType *)y + this->blockLength * GetBlockIdx(),
@@ -95,12 +98,48 @@ private:
   NPU_OP_TYPE op_type_;
 };
 
-extern "C" __global__ __aicore__ void binary_op_kernal(GM_ADDR x, GM_ADDR y, GM_ADDR z,
+// template<typename Type>
+// extern "C" __global__ __aicore__ void binary_op_kernal(GM_ADDR x, GM_ADDR y, GM_ADDR z,
+//                                                 GM_ADDR workspace,
+//                                                 CustomTilingData tiling) {
+//   // printf("add_custom, totalLength=%d, tileNum=%d\n", tiling.totalLength,
+//   //        tiling.tileNum);
+//   // assert(std::is_same<Type, half> || std::is_same<Type, float> ||
+//   //        std::is_same<Type, int32_t>);
+//   BinaryOP<Type> op;
+//   op.Init(x, y, z, tiling.totalLength, tiling.tileNum,
+//           static_cast<NPU_OP_TYPE>(tiling.opType));
+//   op.Process();
+// }
+
+extern "C" __global__ __aicore__ void binary_op_kernal_half(GM_ADDR x, GM_ADDR y, GM_ADDR z,
                                                 GM_ADDR workspace,
                                                 CustomTilingData tiling) {
   // printf("add_custom, totalLength=%d, tileNum=%d\n", tiling.totalLength,
   //        tiling.tileNum);
   BinaryOP<half> op;
+  op.Init(x, y, z, tiling.totalLength, tiling.tileNum,
+          static_cast<NPU_OP_TYPE>(tiling.opType));
+  op.Process();
+}
+
+extern "C" __global__ __aicore__ void binary_op_kernal_float(GM_ADDR x, GM_ADDR y, GM_ADDR z,
+                                                GM_ADDR workspace,
+                                                CustomTilingData tiling) {
+  // printf("add_custom, totalLength=%d, tileNum=%d\n", tiling.totalLength,
+  //        tiling.tileNum);
+  BinaryOP<float> op;
+  op.Init(x, y, z, tiling.totalLength, tiling.tileNum,
+          static_cast<NPU_OP_TYPE>(tiling.opType));
+  op.Process();
+}
+
+extern "C" __global__ __aicore__ void binary_op_kernal_int32_t(GM_ADDR x, GM_ADDR y, GM_ADDR z,
+                                                GM_ADDR workspace,
+                                                CustomTilingData tiling) {
+  // printf("add_custom, totalLength=%d, tileNum=%d\n", tiling.totalLength,
+  //        tiling.tileNum);
+  BinaryOP<int32_t> op;
   op.Init(x, y, z, tiling.totalLength, tiling.tileNum,
           static_cast<NPU_OP_TYPE>(tiling.opType));
   op.Process();
