@@ -20,48 +20,48 @@ class TensorBackend {
 public:
   virtual ~TensorBackend(){};
 
-  /**
-   * @brief get the offset of a tensor element given its index
-   * @param index The index of the element
-   * @param strides The strides of the tensor
-   * @return The offset of the element
-   */
-  virtual int index_to_offset(const std::vector<int> &index,
-                              const std::vector<int> &strides) = 0;
+  // /**
+  //  * @brief get the offset of a tensor element given its index
+  //  * @param index The index of the element
+  //  * @param strides The strides of the tensor
+  //  * @return The offset of the element
+  //  */
+  // virtual int index_to_offset(const std::vector<int> &index,
+  //                             const std::vector<int> &strides) = 0;
 
-  /**
-   * @brief get the index of a tensor element given its offset
-   * @param offset The offset of the element
-   * @param shape The shape of the tensor
-   * @param index The index of the element
-   * @return void
-   */
-  virtual void offset_to_index(int offset, const std::vector<int> &shape,
-                               std::vector<int> &index) = 0;
+  // /**
+  //  * @brief get the index of a tensor element given its offset
+  //  * @param offset The offset of the element
+  //  * @param shape The shape of the tensor
+  //  * @param index The index of the element
+  //  * @return void
+  //  */
+  // virtual void offset_to_index(int offset, const std::vector<int> &shape,
+  //                              std::vector<int> &index) = 0;
 
-  /**
-   * @brief broadcast the index of a big tensor element to a smaller tensor
-   * @param big_index The index of the element in the big tensor
-   * @param big_shape The shape of the big tensor
-   * @param shape The shape of the smaller tensor
-   * @param broadcasted_index The broadcasted index
-   * @return void
-   */
-  virtual void broadcast_index(const std::vector<int> &big_index,
-                               const std::vector<int> &big_shape,
-                               const std::vector<int> &shape,
-                               std::vector<int> &broadcasted_index) = 0;
+  // /**
+  //  * @brief broadcast the index of a big tensor element to a smaller tensor
+  //  * @param big_index The index of the element in the big tensor
+  //  * @param big_shape The shape of the big tensor
+  //  * @param shape The shape of the smaller tensor
+  //  * @param broadcasted_index The broadcasted index
+  //  * @return void
+  //  */
+  // virtual void broadcast_index(const std::vector<int> &big_index,
+  //                              const std::vector<int> &big_shape,
+  //                              const std::vector<int> &shape,
+  //                              std::vector<int> &broadcasted_index) = 0;
 
-  /**
-   * @brief broadcast the shape of two tensors
-   * @param shape1 The shape of the first tensor
-   * @param shape2 The shape of the second tensor
-   * @param broadcasted_shape The broadcasted shape
-   * @return is broadcast success
-   */
-  virtual bool broadcast_shape(const std::vector<int> &shape1,
-                               const std::vector<int> &shape2,
-                               std::vector<int> &broadcasted_shape) = 0;
+  // /**
+  //  * @brief broadcast the shape of two tensors
+  //  * @param shape1 The shape of the first tensor
+  //  * @param shape2 The shape of the second tensor
+  //  * @param broadcasted_shape The broadcasted shape
+  //  * @return is broadcast success
+  //  */
+  // virtual bool broadcast_shape(const std::vector<int> &shape1,
+  //                              const std::vector<int> &shape2,
+  //                              std::vector<int> &broadcasted_shape) = 0;
   /**
    * @brief negate a tensor element-wise
    * @param a The input tensor

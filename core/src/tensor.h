@@ -180,6 +180,13 @@ public:
   //   return std::shared_ptr<Tensor>(this);
   // }
 
+  void to(const DLContext &ctx) {
+    if (ctx_ == ctx)
+      return;
+    data_->to(ctx);
+    ctx_ = ctx;
+  }
+
   static std::shared_ptr<Tensor>
   make(DLContext ctx, const std::vector<int> &shape, void *data) {
     std::shared_ptr<Tensor> tensor;

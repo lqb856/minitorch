@@ -24,7 +24,7 @@ public:
    * @return The offset of the element
    */
   int index_to_offset(const std::vector<int> &index,
-                      const std::vector<int> &strides) override;
+                      const std::vector<int> &strides);
 
   /**
    * @brief get the index of a tensor element given its offset
@@ -34,7 +34,7 @@ public:
    * @return void
    */
   void offset_to_index(int offset, const std::vector<int> &shape,
-                       std::vector<int> &index) override;
+                       std::vector<int> &index);
 
   /**
    * @brief broadcast the index of a big tensor element to a smaller tensor
@@ -47,7 +47,7 @@ public:
   void broadcast_index(const std::vector<int> &big_index,
                        const std::vector<int> &big_shape,
                        const std::vector<int> &shape,
-                       std::vector<int> &broadcasted_index) override;
+                       std::vector<int> &broadcasted_index);
 
   /**
    * @brief broadcast the shape of two tensors
@@ -58,7 +58,7 @@ public:
    */
   bool broadcast_shape(const std::vector<int> &shape1,
                        const std::vector<int> &shape2,
-                       std::vector<int> &broadcasted_shape) override;
+                       std::vector<int> &broadcasted_shape);
 
   /**
    * @brief negate a tensor element-wise

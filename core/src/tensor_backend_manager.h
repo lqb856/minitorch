@@ -39,9 +39,9 @@ private:
     std::fill(api_.begin(), api_.end(), nullptr);
     static TensorBackendCPU cpu_backend_inst;
     // static TensorBackendGPU gpu_backend_inst;
-    // static TensorBackendAtlas atlas_backend_inst;
+    static TensorBackendAtlas atlas_backend_inst;
     api_[static_cast<int>(DLDeviceType::kCPU)] = static_cast<TensorBackend *>(&cpu_backend_inst);
-    // api_[DLDeviceType::kGPU] = static_cast<TensorBackend *>(&gpu_backend_inst);
+    api_[static_cast<int>(DLDeviceType::KAtlas)] = static_cast<TensorBackend *>(&atlas_backend_inst);
   }
 
   // Get global static variable.

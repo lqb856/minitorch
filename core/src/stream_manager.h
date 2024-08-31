@@ -9,6 +9,7 @@
 
 #include "device_api_manager.h"
 #include "dl_context.h"
+#include <iostream>
 
 namespace dlsys {
 namespace runtime {
@@ -64,6 +65,7 @@ public:
 
   static void Init(DLContext ctx) {
     DeviceAPIManager::Get(ctx)->ContextCreate(ctx, &context_);
+    std::cout << "Init context: " << ctx.to_string() << std::endl;
   }
 
   static void Destroy(DLContext ctx) {

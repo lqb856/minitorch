@@ -10,23 +10,17 @@ option(CMAKE_BUILD_TYPE "Build type Release/Debug (default Debug)" Debug)
 
 if(USE_ASCEND)
     # optional parameters
-    option(RUN_MODE "RUN_MODE: cpu/sim/npu, default npu" "npu")
-    option(SOC_VERSION "SOC_VERSION: default Ascend310b4" "Ascend310b4")
-    option(ASCEND_CANN_PACKAGE_PATH "ASCEND CANN package installation directory" "/opt/ascend/ascend-toolkit/latest")
+    set(RUN_MODE "npu" CACHE STRING "cpu/sim/npu")
+    set(SOC_VERSION "Ascend310b4" CACHE STRING "system on chip type")
+    set(ASCEND_CANN_PACKAGE_PATH "/opt/ascend/ascend-toolkit/latest" CACHE STRING "ASCEND CANN package installation directory")
+    set(ASCEND_CANN_INCLUDE_PATH "${ASCEND_CANN_PACKAGE_PATH}/include" CACHE STRING "CANN include path")
+    set(ASCEND_CANN_LIBRARY_PATH "${ASCEND_CANN_PACKAGE_PATH}/lib64" CACHE STRING "ASCEND library path")
 
     message(STATUS "Ascend device support enabled.")
-
-    # set(RUN_MODE "npu" CACHE STRING "cpu/sim/npu")
     message(STATUS "RUN_MODE: ${RUN_MODE}")
-
-    # set(SOC_VERSION "Ascend310b4" CACHE STRING "system on chip type")
     message(STATUS "SOC_VERSION: ${SOC_VERSION}")
-
-    # set(ASCEND_CANN_PACKAGE_PATH "/opt/ascend/ascend-toolkit/latest" CACHE STRING "ASCEND CANN package installation directory")
     message(STATUS "ASCEND CANN package path: ${ASCEND_CANN_PACKAGE_PATH}")
-    set(ASCEND_CANN_INCLUDE_PATH "${ASCEND_CANN_PACKAGE_PATH}/include" CACHE STRING "CANN include path")
     message(STATUS "ASCEND include path: ${ASCEND_CANN_INCLUDE_PATH}")
-    set(ASCEND_CANN_LIBRARY_PATH "${ASCEND_CANN_PACKAGE_PATH}/lib64" CACHE STRING "ASCEND library path")
     message(STATUS "ASCEND library path: ${ASCEND_CANN_LIBRARY_PATH}")
     add_subdirectory(src/ascend/)
 

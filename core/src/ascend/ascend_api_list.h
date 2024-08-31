@@ -31,7 +31,6 @@ const int kMaxBlockDim = 8;
       std::cerr << __FILE__ << ":" << __LINE__ << " aclError:" << __ret        \
                 << std::endl;                                                  \
     }                                                                          \
-    exit(-1);                                                                  \
   } while (0);
 
 // TODO(lqb): add more kernel functions

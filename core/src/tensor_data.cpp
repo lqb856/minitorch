@@ -7,6 +7,7 @@
 
 #include "tensor_data.h"
 #include "device_api_manager.h"
+#include "dl_context.h"
 
 namespace dlsys {
 namespace runtime {
@@ -38,6 +39,7 @@ TensorData::TensorData(const DLContext ctx, const std::vector<int> shape,
   }
   data_ = DeviceAPIManager::Get(ctx)->AllocDataSpace(ctx, size_ * sizeof(float),
                                                      64);
+  // TODO(lqb): data is on cpu by default now
   DeviceAPIManager::Get(ctx)->CopyDataFromTo(data, data_, size_ * sizeof(float),
                                              ctx, ctx, nullptr);
 }
@@ -52,6 +54,7 @@ void TensorData::to(const DLContext &new_ctx) {
     return;
   void *new_data = DeviceAPIManager::Get(new_ctx)->AllocDataSpace(
       new_ctx, size_ * sizeof(float), 64);
+  // FIXME(lqb): who should be responsible for copying data?
   DeviceAPIManager::Get(new_ctx)->CopyDataFromTo(
       data_, new_data, size_ * sizeof(float), ctx_, new_ctx, nullptr);
   DeviceAPIManager::Get(ctx_)->FreeDataSpace(ctx_, data_);

@@ -8,6 +8,7 @@
 #pragma once
 
 #include "cpu_device_api.h"
+#include "ascend_device_api.h"
 #include "dl_context.h"
 // #include "cuda_device_api.h"
 #include <iostream>
@@ -35,9 +36,10 @@ private:
     api_.resize(kMaxDeviceAPI);
     std::fill(api_.begin(), api_.end(), nullptr);
     static CPUDeviceAPI cpu_device_api_inst;
+    static AscendDeviceAPI ascend_device_api_inst;
     // static CUDADeviceAPI gpu_device_api_inst;
     api_[static_cast<int>(DLDeviceType::kCPU)] = static_cast<DeviceAPI *>(&cpu_device_api_inst);
-    // api_[kGPU] = static_cast<DeviceAPI *>(&gpu_device_api_inst);
+    api_[static_cast<int>(DLDeviceType::KAtlas)] = static_cast<DeviceAPI *>(&ascend_device_api_inst);
   }
 
   // Get global static variable.
